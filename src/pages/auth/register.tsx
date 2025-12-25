@@ -6,9 +6,9 @@ import { Link } from "react-router-dom";
 
 
 const initialState = {
-    userName: "",
     email: "",
     password: "",
+    confirmPassword: "",
 };
 
 

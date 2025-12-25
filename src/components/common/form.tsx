@@ -2,6 +2,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { Label } from "../ui/label";
 
 interface CommonFormProps {
   formControls: Array<{
@@ -27,7 +28,7 @@ function CommonForm({
   onSubmit,
   buttonText,
   isBtnDisabled,
-  forgotPassword = false
+  forgotPassword = false,
 }: CommonFormProps) {
   // Tracking visibility for multiple password fields
   const [showPasswordFields, setShowPasswordFields] = useState<Record<string, boolean>>({})
@@ -37,7 +38,8 @@ function CommonForm({
       <div className="flex flex-col gap-1">
         {formControls.map((controlItem) => (
           <div className="grid w-full gap-1" key={controlItem.name}>
-            <label htmlFor={controlItem.label} className="block text-sm font-medium mb-2 text-[#111827]">{controlItem.label}</label>
+            <div>
+            <Label htmlFor={controlItem.label} className="block text-sm font-medium mb-2 text-[#111827]">{controlItem.label}</Label>
 
             <div className="relative group w-full mb-5">
               <Input
@@ -54,6 +56,7 @@ function CommonForm({
                 }}
                 className="peer w-full border text-base py-5.75 px-3.5 border-[#EDE9FE] transition-all ease-linear duration-200 rounded-md outline-none focus:border-[#9013fe] focus:ring-0 bg-white"
               />
+              </div>
               <div className="pointer-events-none absolute inset-0 rounded-md peer-focus:shadow-[0_0_0_3px_rgba(124,58,237,0.1)]"></div>
               {controlItem.type === "password" && (
                 <Button

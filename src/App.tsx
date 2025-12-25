@@ -13,8 +13,6 @@ import TechStackDashboard from "./pages/dashboard/tech-stack"
 import SubscriptionDashboard from "./pages/dashboard/subscriptions"
 import RewardsDashboard from "./pages/dashboard/rewards"
 import AccountSettingDashboard from "./pages/dashboard/settings"
-import "./App.css"
-
 function App() {
 
   return (

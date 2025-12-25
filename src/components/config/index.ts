@@ -1,3 +1,6 @@
+// Form control configurations for different forms
+
+// Register Form Controls
 export const registerFormControls = [
   {
     name: "email",
@@ -23,6 +26,7 @@ export const registerFormControls = [
   },
 ];
 
+// Login Form Controls
 export const loginFormControls = [
   {
     name: "email",
@@ -41,6 +45,7 @@ export const loginFormControls = [
   },
 ];
 
+// Forgot Password Form Controls
 export const forgotPasswordFormControls = [
   {
     name: "email",
@@ -50,3 +55,4 @@ export const forgotPasswordFormControls = [
     type: "email",
   },
 ];
+

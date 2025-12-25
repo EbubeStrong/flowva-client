@@ -31,7 +31,7 @@ function LibraryDashboard() {
                             <div className="bg-gray-100 p-4 rounded-full flex items-center justify-center">
                                 <div className="text-black transition-colors duration-300 justify-center items-center flex group-hover:text-purple-600">
                                     <div className=" w-fit flex justify-center items-center">
-                                        <span role="img" aria-label="plus" className="anticon anticon-plus text-purple-600 text-lg">{item.icon}</span>
+                                        <span role="img" aria-label="plus" className="text-purple-600 text-lg">{item.icon}</span>
                                     </div>
                                 </div>
                             </div>

@@ -5,6 +5,7 @@ interface CheckAuthProps {
     children: React.ReactNode;
 }
 
+// Component to check authentication and redirect accordingly
 function CheckAuth({ isAuthenticated, children }: CheckAuthProps) {
   const location = useLocation();
 

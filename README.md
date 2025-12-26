@@ -2,20 +2,44 @@
 
 A React + TypeScript + Vite project for a dashboard-style web application.
 
+This project recreates the Rewards page of Flowva using React and Supabase.
+
 ## Features
 
 - **Routing:** Uses `react-router-dom` for client-side routing.
 - **Authentication:** Includes authentication pages (Sign In, Sign Up, Forgot Password) and protected dashboard routes.
-- **Dashboard:** Multiple dashboard sections:
-  - Home
-  - Discover
-  - Library
-  - Tech Stack
-  - Subscriptions
-  - Rewards
-  - Account Settings
-- **Layouts:** Separate layouts for authentication and dashboard pages.
 - **Error Handling:** Custom 404 Not Found page.
+- Supabase authentication (email)
+- Protected dashboard routes
+- User-specific rewards tracking
+- Daily claim logic with streak tracking
+- Row Level Security (RLS)
+- Loading and empty states
+
+
+## Tech Stack
+- React (Vite)
+- Supabase (Auth + Database)
+- Tailwind CSS
+- React Router v6
+
+
+🗄️ Database Schema
+
+Table: `flowva_rewards`
+
+| Column | Type |
+|------|------|
+| id | uuid |
+| user_id | uuid |
+| points | integer |
+| streak | integer |
+| last_claim_date | date |
+| created_at | timestamptz |
+
+
+## Security
+Row Level Security ensures users can only access their own reward data.
 
 ## Project Structure
 
@@ -82,35 +106,6 @@ src/
 
 ## Notes
 
-- The root route (`/`) redirects to `/dashboard` for a better user experience.
 - Authentication checks are handled via the `CheckAuth` component (see `src/components/common/check-auth.tsx`).
 - The project uses Vite for fast development and build times.
 - ESLint and TypeScript are configured for code quality and type safety.
-
-## ESLint & TypeScript
-
-See below for recommended ESLint configuration for type-aware linting and React-specific rules.
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      tseslint.configs.recommendedTypeChecked,
-      tseslint.configs.strictTypeChecked,
-      tseslint.configs.stylisticTypeChecked,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-  },
-])
-```
-
-## License
-
-MIT

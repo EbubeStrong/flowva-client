@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import { supabase } from "../../lib/supabase";
+import { toast } from "sonner";
+import { useAuth } from "../../providers/useAuth";
+
 
 
 const initialState = {
@@ -14,11 +18,80 @@ const initialState = {
 
 function AccountSettingDashboard() {
     const [formData, setFormData] = useState<Record<string, string>>(initialState);
+    const {session} = useAuth();
 
-    function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        // Handle form submission logic here
+
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) {
+            toast.error("Not authenticated");
+            return;
+        }
+
+        const { error } = await supabase
+            .from("profiles")
+            .update({
+                first_name: formData.firstName,
+                last_name: formData.lastName,
+            })
+            .eq("user_id", user.id);
+
+        if (error) {
+            toast.error("Failed to update profile", {
+                description: error.message,
+            });
+        } else {
+            toast.success("Profile updated successfully");
+        }
     }
+
+
+    useEffect(() => {
+        const loadProfile = async () => {
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
+
+            if (!user) return;
+
+            // email comes from auth
+            setFormData(prev => ({
+                ...prev,
+                email: user.email ?? "",
+            }));
+
+            const { data, error } = await supabase
+                .from("profiles")
+                .select("first_name, last_name")
+                .eq("user_id", user.id)
+                .single();
+
+            // Create row if missing
+            if (error?.code === "PGRST116") {
+                await supabase.from("profiles").insert({
+                    user_id: user.id,
+                    first_name: "",
+                    last_name: "",
+                });
+                return;
+            }
+
+            if (data) {
+                setFormData(prev => ({
+                    ...prev,
+                    firstName: data.first_name ?? "",
+                    lastName: data.last_name ?? "",
+                }));
+            }
+        };
+
+        loadProfile();
+    }, []);
+
 
     return (
         <div className="lg:h-[calc(100vh-99px)] my-3  [scrollbar-width:none] [-ms-overflow-style:none] overflow-y-auto">
@@ -30,9 +103,9 @@ function AccountSettingDashboard() {
                         <div className="flex justify-between w-full items-end mt-6 mb-6">
                             <div className=" md:flex items-center mb-4 gap-6 w-full">
                                 <div className="flex justify-center md:block">
-                                    <div className="w-20 h-20 cursor-pointer rounded-full flex items-center mb-6 xl:mb-0 justify-center overflow-hidden shrink-0 bg-[#E9D4FF]">
+                                    <div className="w-15 h-15 cursor-pointer rounded-full flex items-center mb-2 xl:mb-0 justify-center overflow-hidden shrink-0 bg-[#E9D4FF]">
                                         <Avatar>
-                                            <AvatarFallback>Hb</AvatarFallback>
+                                            <AvatarFallback className="text-xl md:text-4xl -mt-1 bg-transparent">{session?.user?.email?.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                     </div>
                                 </div>
@@ -90,8 +163,7 @@ function AccountSettingDashboard() {
                                             placeholder="youremail.com"
                                             id="email"
                                             value={formData.email}
-                                            disabled={true}
-                                            onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                            disabled
                                             className="peer w-full border text-base py-5.75 px-3.5 border-[#EDE9FE] transition-all ease-linear duration-200 rounded-md outline-none focus:border-[#9013fe] focus:ring-0 bg-white"
                                         />
                                     </div>

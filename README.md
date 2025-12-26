@@ -1,21 +1,95 @@
-# React + TypeScript + Vite
+# Flowva
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript + Vite project for a dashboard-style web application.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Routing:** Uses `react-router-dom` for client-side routing.
+- **Authentication:** Includes authentication pages (Sign In, Sign Up, Forgot Password) and protected dashboard routes.
+- **Dashboard:** Multiple dashboard sections:
+  - Home
+  - Discover
+  - Library
+  - Tech Stack
+  - Subscriptions
+  - Rewards
+  - Account Settings
+- **Layouts:** Separate layouts for authentication and dashboard pages.
+- **Error Handling:** Custom 404 Not Found page.
 
-## React Compiler
+## Project Structure
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+```
+src/
+  components/
+    auth/
+      layout.tsx
+    common/
+      check-auth.tsx
+  pages/
+    auth/
+      login.tsx
+      register.tsx
+      forgot-password.tsx
+    dashboard/
+      layout.tsx
+      home.tsx
+      discover.tsx
+      library.tsx
+      tech-stack.tsx
+      subscriptions.tsx
+      rewards.tsx
+      settings.tsx
+    not-found/
+      not-found.tsx
+  providers/
+    useAuth.ts
+  App.tsx
+```
 
-Note: This will impact Vite dev & build performances.
+## Routing Overview
 
-## Expanding the ESLint configuration
+- `/auth` – Authentication layout
+  - `/auth/signin` – Login page
+  - `/auth/signup` – Registration page
+  - `/auth/forgot-password` – Password reset
+- `/dashboard` – Dashboard layout (protected)
+  - `/dashboard` – Home
+  - `/dashboard/discover`
+  - `/dashboard/library`
+  - `/dashboard/tech-stack`
+  - `/dashboard/subscriptions`
+  - `/dashboard/earn-rewards`
+  - `/dashboard/account-settings`
+- `*` – 404 Not Found
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+3. **Build for production:**
+   ```bash
+   npm run build
+   ```
+
+## Notes
+
+- The root route (`/`) redirects to `/dashboard` for a better user experience.
+- Authentication checks are handled via the `CheckAuth` component (see `src/components/common/check-auth.tsx`).
+- The project uses Vite for fast development and build times.
+- ESLint and TypeScript are configured for code quality and type safety.
+
+## ESLint & TypeScript
+
+See below for recommended ESLint configuration for type-aware linting and React-specific rules.
 
 ```js
 export default defineConfig([
@@ -23,53 +97,20 @@ export default defineConfig([
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
       tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
       tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
       tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
     ],
     languageOptions: {
       parserOptions: {
         project: ['./tsconfig.node.json', './tsconfig.app.json'],
         tsconfigRootDir: import.meta.dirname,
       },
-      // other options...
     },
   },
 ])
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## License
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+MIT

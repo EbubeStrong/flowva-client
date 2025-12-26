@@ -1,13 +1,28 @@
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { NavItems } from "../common/navigation";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import Logo from "../../assets/flowva-logo.png";
 import { useState } from "react";
+import NotificationDropdown from "./notifications";
+import { Separator } from "../ui/separator";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { useAuth } from "../../providers/useAuth";
+import { supabase } from "../../lib/supabase";
 
 
-function DashboardHeader({ title, titleSpan,  showActive }: { title: string, titleSpan?: string, showActive: string }) {
+function DashboardHeader({ title, titleSpan, showActive }: { title: string, titleSpan?: string, showActive: string }) {
     const [open, setOpen] = useState(false);
+
+    const { session } = useAuth()
+    
+    // HANDLE LOGOUT
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        window.location.href = "/auth/signin";
+    };
+
     return (
         <div className=" bg-gray-50 pb-2 flex py-2 pt-3 ">
             <div className=" bg-gray-50 flex justify-between items-center w-full">
@@ -31,10 +46,10 @@ function DashboardHeader({ title, titleSpan,  showActive }: { title: string, tit
                         </SheetTrigger>
 
                         <SheetContent side="left" className="w-72 p-4">
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-4 h-full relative">
                                 <img src={Logo} alt="Flowva Logo" className="h-15 w-35" />
                                 {NavItems.map((item) => {
-                                     const isActive = showActive === item.url;
+                                    const isActive = showActive === item.url;
                                     return (
 
                                         <Link
@@ -49,7 +64,61 @@ function DashboardHeader({ title, titleSpan,  showActive }: { title: string, tit
 
                                     )
                                 })}
+                                <div className="absolute w-full left-0 bottom-5 right-0">
+                                <Separator className="my-2 border-black/10 mb-5" />
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="w-full flex-col py-3 justify-start px-6 bg-transparent cursor-pointer"
+                                        >
+                                            {session?.user && (
+                                                <div className="flex gap-3 items-center border-black/10">
+                                                    <Avatar>
+                                                        <AvatarFallback className="bg-purple-600 text-white">
+                                                            {session.user.email?.charAt(0).toUpperCase()}
+                                                        </AvatarFallback>
+                                                    </Avatar>
+
+                                                    <div className="min-w-0">
+                                                        {!open ? null : (
+                                                            <h3 className="break-words whitespace-normal">
+                                                                {session.user.email}
+                                                            </h3>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </Button>
+                                    </DropdownMenuTrigger>
+
+                                    <DropdownMenuContent
+                                        side="top"
+                                        align="center"
+                                        className="w-56"
+                                    >
+                                        <DropdownMenuItem>
+                                            Feedback
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuItem>
+                                            Support
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuItem
+                                            className="text-red-600 focus:text-red-600"
+                                            onClick={handleLogout}
+                                        >
+                                            Logout
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+
                             </div>
+                            </div>
+
+                            
                         </SheetContent>
                     </Sheet>
 
@@ -65,9 +134,7 @@ function DashboardHeader({ title, titleSpan,  showActive }: { title: string, tit
                 </div>
             </div>
 
-            <div className="notification-container group"><button className="notification-bell has-unread " aria-label="Notifications"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="bell" className="svg-inline--fa fa-bell text-[#2D3748] group-hover:text-[#9013fe]" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="black" d="M224 0c-17.7 0-32 14.3-32 32l0 19.2C119 66 64 130.6 64 208l0 18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416l384 0c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8l0-18.8c0-77.4-55-142-128-156.8L256 32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3l-64 0-64 0c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z"></path></svg>
-                <span className="notification-badge ">1</span></button>
-            </div>
+            <NotificationDropdown />
         </div>
     );
 }

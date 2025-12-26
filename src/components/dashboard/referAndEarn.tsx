@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star, Share2, Users, Copy, Facebook, Linkedin, MessageCircle } from 'lucide-react';
+import {  Link } from 'react-router-dom';
 
 const ReferAndEarn = () => {
   // Data for the "Earn More Points" grid
@@ -25,11 +26,11 @@ const ReferAndEarn = () => {
   const referralLink = "https://app.flowvahub.com/signup/?ref=stron5987";
 
   return (
-    <div className="space-y-10 p-6 bg-white">
+    <div className="space-y-10 pt-10 bg-white">
       
       {/* SECTION: Earn More Points */}
       <section>
-        <h2 className="text-xl font-bold flex items-center gap-2 mb-6 border-l-4 border-[#9013fe] pl-3">
+        <h2 className="text-lg md:text-2xl my-3 text-black border-l-4 border-[#9301fe] pl-3 font-semibold">
           Earn More Points
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -71,14 +72,14 @@ const ReferAndEarn = () => {
           Refer & Earn
         </h2>
         
-        <div className="bg-[#f5f8ff] rounded-[40px] p-8 border border-[#eef2ff] shadow-sm">
+        <div>
           {/* Header */}
-          <div className="flex items-start gap-4 mb-10">
-            <div className="p-3 bg-white rounded-2xl shadow-sm text-purple-500">
+          <div className="flex bg-[#f5f8ff] p-3 rounded-sm items-start gap-4 mb-10">
+            <div className="p-3 text-purple-500">
               <Users className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-800">Share Your Link</h3>
+              <h3 className="text-lg font-bold text-gray-800 ">Share Your Link</h3>
               <p className="text-sm text-gray-400">Invite friends and earn 25 points when they join!</p>
             </div>
           </div>
@@ -86,17 +87,17 @@ const ReferAndEarn = () => {
           {/* Stats Row */}
           <div className="grid grid-cols-2 gap-4 mb-12">
             <div className="text-center">
-              <div className="text-3xl font-extrabold text-gray-800">0</div>
+              <div className="text-2xl font-medium text-[#9013fe]">0</div>
               <div className="text-xs text-gray-500 font-medium">Referrals</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-extrabold text-gray-800">0</div>
+              <div className="text-3xl font-medium text-[#9013fe]">0</div>
               <div className="text-xs text-gray-500 font-medium">Points Earned</div>
             </div>
           </div>
 
           {/* Referral Link Input */}
-          <div className="max-w-2xl mx-auto space-y-2 mb-8">
+          <div className="p-3 space-y-2 mb-8">
             <label className="text-xs font-semibold text-gray-500 ml-1">Your personal referral link:</label>
             <div className="relative">
               <input 
@@ -112,10 +113,10 @@ const ReferAndEarn = () => {
 
           {/* Social Icons */}
           <div className="flex justify-center gap-4">
-            <SocialIcon bg="bg-[#1877F2]" icon={<Facebook className="w-4 h-4 fill-current" />} />
-            <SocialIcon bg="bg-black" icon={<XIcon />} />
-            <SocialIcon bg="bg-[#0077B5]" icon={<Linkedin className="w-4 h-4 fill-current" />} />
-            <SocialIcon bg="bg-[#25D366]" icon={<MessageCircle className="w-4 h-4 fill-current" />} />
+            <SocialIcon bg="bg-[#1877F2] w-2 h-2" icon={<Facebook className="w-4 h-4 fill-current" />} href="hhttps://web.facebook.com/share_channel/" />
+            <SocialIcon bg="bg-black  w-2 h-2" icon={<XIcon />} href='https://x.com/intent/post?text=%F0%9F%9A%80%20Join%20me%20on%20Flowva!%0AFlowva%20is%20where%20I%20discover%20top%20tools%2C%20earn%20rewards%2C%20and%20grow%20with%20community%20power.%0A%0AUse%20my%20referral%20link%20to%20sign%20up%20and%20get%20rewarded%20too%3A%0Ahttps%3A%2F%2Fapp.flowvahub.com%2Fsignup%2F%3Fref%3Dstron5987' />
+            <SocialIcon bg="bg-[#0077B5] w-2 h-2" icon={<Linkedin className="w-4 h-4 fill-current" /> } href='https://www.linkedin.com/sharing/share-offsite/?summary=%F0%9F%9A%80%20Join%20me%20on%20Flowva!%0AFlowva%20is%20where%20I%20discover%20top%20tools%2C%20earn%20rewards%2C%20and%20grow%20with%20community%20power.%0A%0AUse%20my%20referral%20link%20to%20sign%20up%20and%20get%20rewarded%20too%3A%0Ahttps%3A%2F%2Fapp.flowvahub.com%2Fsignup%2F%3Fref%3Dstron5987'/>
+            <SocialIcon bg="bg-[#25D366] w-2 h-2" icon={<MessageCircle className="w-4 h-4 fill-current" />} href='https://api.whatsapp.com/send?text=%F0%9F%9A%80%20Join%20me%20on%20Flowva!%0AFlowva%20is%20where%20I%20discover%20top%20tools%2C%20earn%20rewards%2C%20and%20grow%20with%20community%20power.%0A%0AUse%20my%20referral%20link%20to%20sign%20up%20and%20get%20rewarded%20too%3A%0Ahttps%3A%2F%2Fapp.flowvahub.com%2Fsignup%2F%3Fref%3Dstron5987' />
           </div>
         </div>
       </section>
@@ -125,11 +126,25 @@ const ReferAndEarn = () => {
 };
 
 // Helper components for the icons
-const SocialIcon = ({ bg, icon }: { bg: string, icon: React.ReactNode }) => (
-  <button className={`${bg} w-10 h-10 rounded-full flex items-center justify-center text-white hover:opacity-90 transition-opacity shadow-md`}>
+const SocialIcon = ({
+  bg,
+  icon,
+  href,
+}: {
+  bg: string;
+  icon: React.ReactNode;
+  href: string;
+}) => (
+  <Link
+    to={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className={`${bg} w-7 h-7 rounded-full flex items-center justify-center text-white hover:opacity-90 transition-opacity shadow-md`}
+  >
     {icon}
-  </button>
+  </Link>
 );
+
 
 const XIcon = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">

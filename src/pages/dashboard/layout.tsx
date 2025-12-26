@@ -15,6 +15,12 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import Logo from "../../assets/flowva-logo.png";
 import { NavItems } from "../../components/common/navigation";
+import { useAuth } from "../../providers/useAuth";
+import { Avatar, AvatarFallback } from "../../components/ui/avatar";
+import { Separator } from "../../components/ui/separator";
+import { Button } from "../../components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
+import { supabase } from "../../lib/supabase";
 
 
 
@@ -28,7 +34,13 @@ function AppSidebar({
   location: ReturnType<typeof useLocation>;
   showActive: string;
 }) {
-  
+  const { session } = useAuth()
+  // console.log(session?.user)
+  const handleLogout = async () => {
+  await supabase.auth.signOut();
+  window.location.href = "/auth/signin";
+};
+
   return (
     <SidebarContent className="flex flex-col h-full ">
       {/* Top bar with X button when open */}
@@ -49,10 +61,10 @@ function AppSidebar({
       )}
 
       {/* Sidebar items */}
-      <SidebarGroup className="flex-1 overflow-y-auto">
+      <SidebarGroup className="flex-1 relative overflow-y-auto">
         {isOpen && <SidebarGroupLabel className="sr-only">Navigation Menus</SidebarGroupLabel>}
         <SidebarGroupContent>
-          <SidebarMenu className="flex flex-col gap-2 -mt-4 ">
+          <SidebarMenu className="flex flex-col gap-2 ">
             {NavItems.map((item) => {
               const isActive = showActive === item.url;
               return (
@@ -69,6 +81,61 @@ function AppSidebar({
                 </SidebarMenuItem>
               );
             })}
+
+
+            <div className="absolute w-full left-0 bottom-5 right-0">
+              <Separator className="my-2 border-black/10 mb-5" />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full flex-col py-3 justify-start px-6 bg-transparent cursor-pointer"
+                  >
+                    {session?.user && (
+                      <div className="flex gap-3 items-center border-black/10">
+                        <Avatar>
+                          <AvatarFallback className="bg-purple-600 text-white">
+                            {session.user.email?.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <div className="min-w-0">
+                          {!isOpen ? null : (
+                            <h3 className="break-words whitespace-normal">
+                              {session.user.email}
+                            </h3>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent
+                  side="top"
+                  align="center"
+                  className="w-56"
+                >
+                  <DropdownMenuItem>
+                    Feedback
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem>
+                    Support
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    className="text-red-600 focus:text-red-600"
+                     onClick={handleLogout}
+                  >
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+            </div>
+
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
@@ -80,6 +147,8 @@ function DashboardLayout() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const showActive = location.pathname
+  const { session } = useAuth();
+
 
   function getGreetingByTime() {
     const currentHour = new Date().getHours();
@@ -88,7 +157,11 @@ function DashboardLayout() {
     return "Good evening,";
   }
 
-  const user = { name: "Strong" };
+
+  const user = {
+    name: session?.user?.email?.slice(0, 4) ?? session?.user?.user_metadata?.name ?? "Guest",
+  };
+
 
   const headerTitleMap: Record<string, string> = {
     "/dashboard/discover": "Discover",
@@ -113,7 +186,7 @@ function DashboardLayout() {
         <SidebarProvider>
           <Sidebar
             className="border-r shadow-md"
-            style={isSidebarOpen ? { width: "16rem", } : { width: "4rem" }}
+            style={isSidebarOpen ? { width: "17rem", } : { width: "4rem" }}
 
           >
             <AppSidebar
@@ -127,11 +200,13 @@ function DashboardLayout() {
       </aside>
 
       {/* Main content */}
-      <main className="w-full bg-gray-50 px-4 lg:pt-8 min-h-screen grow md:overflow-y-auto box-border lg:min-h-0 transition-all duration-300">
+      <main className="w-full bg-gray-50 px-4 lg:pt-8 md:px-9 min-h-screen grow md:overflow-y-auto box-border lg:min-h-0 transition-all duration-300">
         <div className="bg-gray-50 sticky w-full md:fixed md:w-full md:max-w-[70%] lg:max-w-full pr-3 md:pr-14 lg:pr-5 lg:sticky top-0 z-20">
-          <DashboardHeader title={title} titleSpan={titleSpan}  showActive={showActive} />
+          <DashboardHeader title={title} titleSpan={titleSpan} showActive={showActive} />
         </div>
-        <Outlet />
+        <div className="md:mt-14 pb-7">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

@@ -3,6 +3,8 @@ import CommonForm from "../../components/common/form";
 import { registerFormControls } from "../../components/config";
 import { Button } from "../../components/ui/button";
 import { Link } from "react-router-dom";
+import { supabase } from "../../lib/supabase";
+import { toast } from "sonner";
 
 
 const initialState = {
@@ -14,26 +16,50 @@ const initialState = {
 
 function AuthRegister() {
     const [formData, setFormData] = useState<Record<string, string>>(initialState);
+    const [isLoading, setIsLoading] = useState(false);
 
+    async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: formData.email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
 
-    function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
+      if (error) throw error;
 
-        // dispatch(loginUser(formData)).then((data) => {
-        //   if (data?.payload?.success) {
-        //     toast({
-        //       title: data?.payload?.message,
-        //       className: "bg-white text-black",
-        //     });
-        //   } else {
-        //     toast({
-        //       title: data?.payload?.message,
-        //       variant: "destructive",
-        //       className: "bg-red-600 text-white",
-        //     });
-        //   }
-        // });
+       toast.success("Account created! Check your email to confirm.");
+    } catch (error: Error | unknown) {
+      const message = error instanceof Error ? error.message : "Authentication failed";
+      toast.error("Signup failed", {
+        description: message,
+      });
+    } finally {
+      setIsLoading(false);
     }
+  }
+
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+
+    if (error) {
+      setIsLoading(false);
+      console.error(error.message);
+      toast.error(error.message);
+    }
+  };
+
+
 
     return (
         <div className="mx-auto w-full max-w-md space-y-6">
@@ -48,6 +74,7 @@ function AuthRegister() {
                 formData={formData}
                 setFormData={setFormData}
                 onSubmit={onSubmit}
+                loading={isLoading}
             />
             <div className="relative flex items-center w-full my-5">
                 <div className="grow h-px bg-[#EDE9FE]"></div>
@@ -55,7 +82,7 @@ function AuthRegister() {
                 <div className="grow h-px bg-[#EDE9FE]"></div>
             </div>
 
-            <Button className="border py-6 px-3.5 text-sm md:text-md w-full gap-2 bg-transparent text-[#111827] border-[#EDE9FE] rounded-md hover:bg-[#F5F3FF] transition-colors flex items-center justify-center relative cursor-pointer">
+            <Button onClick={handleGoogleSignIn} className="border py-6 px-3.5 text-sm md:text-md w-full gap-2 bg-transparent text-[#111827] border-[#EDE9FE] rounded-md hover:bg-[#F5F3FF] transition-colors flex items-center justify-center relative cursor-pointer">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"

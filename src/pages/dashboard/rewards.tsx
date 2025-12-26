@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import RewardEarning from "../../components/dashboard/earnRewards";
+import RedeemSection from "../../components/dashboard/redeemReward";
 
 
 function RewardsDashboard() {
@@ -33,13 +34,13 @@ function RewardsDashboard() {
                             </TabsTrigger>
                         </TabsList>
 
-                        <div className="h-105 mt-4">
+                        <div className=" mt-4">
                             <TabsContent value="earn" className="animate-in fade-in duration-300">
                                 <RewardEarning />
                             </TabsContent>
 
                             <TabsContent value="redeem" className="animate-in fade-in duration-300">
-
+                                <RedeemSection />
                             </TabsContent>
                         </div>
                     </Tabs>

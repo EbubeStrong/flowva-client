@@ -23,6 +23,7 @@ function ForgotPassword() {
                 formData={formData}
                 setFormData={setFormData}
                 onSubmit={onSubmit}
+                isBtnDisabled={true}
             />
 
             <div className="text-center mt-5 text-sm">

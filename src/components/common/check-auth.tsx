@@ -1,36 +1,31 @@
+// components/auth/check-auth.tsx
 import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../providers/useAuth"; 
+import { AuthLoadingScreen } from "../dashboard/authLoading";
 
 interface CheckAuthProps {
-    isAuthenticated: boolean;
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
-// Component to check authentication and redirect accordingly
-function CheckAuth({ isAuthenticated, children }: CheckAuthProps) {
+export default function CheckAuth({ children }: CheckAuthProps) {
+  const { session, loading } = useAuth();
   const location = useLocation();
 
-  console.log(location.pathname, isAuthenticated);
-
-  if (location.pathname === "/") {
-    if (!isAuthenticated) {
-      return <Navigate to="/auth/signin" />;
-    } else {
-      return <Navigate to="/dashboard" />;
-    }
+  // 1. While checking Supabase session, show the scaling logo loading screen
+  if (loading) {
+    return <AuthLoadingScreen />;
   }
 
-  if (
-    !isAuthenticated &&
-    !(
-      location.pathname.includes("/auth/signin") ||
-      location.pathname.includes("/auth/signup") ||
-      location.pathname.includes("/auth/forgot-password")
-    )
-  ) {
-    return <Navigate to="/auth/signin" />;
+  // 2. If NOT logged in and trying to access dashboard routes -> Redirect to signin
+  if (!session && location.pathname.includes("/dashboard")) {
+    return <Navigate to="/auth/signin" state={{ from: location }} replace />;
   }
 
+  // 3. If IS logged in and trying to access auth routes (login/signup) -> Redirect to dashboard
+  if (session && location.pathname.includes("/auth")) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // 4. Otherwise, allow access
   return <>{children}</>;
 }
-
-export default CheckAuth;

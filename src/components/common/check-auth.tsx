@@ -17,7 +17,7 @@ export default function CheckAuth({ children }: CheckAuthProps) {
   }
 //   Determine if user is authenticated
   if (!session && location.pathname === "/") {
-      return <Navigate to="/auth/login" />;
+      return <Navigate to="/auth/signin" />;
     }
     
     // If logged in and trying to access root -> Redirect to dashboard

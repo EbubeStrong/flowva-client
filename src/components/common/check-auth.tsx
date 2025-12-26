@@ -11,17 +11,26 @@ export default function CheckAuth({ children }: CheckAuthProps) {
   const { session, loading } = useAuth();
   const location = useLocation();
 
-  // 1. While checking Supabase session, show the scaling logo loading screen
+  //  While checking Supabase session, show loading screen
   if (loading) {
     return <AuthLoadingScreen />;
   }
+//   Determine if user is authenticated
+  if (!session && location.pathname === "/") {
+      return <Navigate to="/auth/login" />;
+    }
+    
+    // If logged in and trying to access root -> Redirect to dashboard
+  if (session && location.pathname === "/") {
+      return <Navigate to="/dashboard" />;
+    }
 
-  // 2. If NOT logged in and trying to access dashboard routes -> Redirect to signin
+  // If NOT logged in and trying to access dashboard routes -> Redirect to signin
   if (!session && location.pathname.includes("/dashboard")) {
     return <Navigate to="/auth/signin" state={{ from: location }} replace />;
   }
 
-  // 3. If IS logged in and trying to access auth routes (login/signup) -> Redirect to dashboard
+  // If IS logged in and trying to access auth routes (login/signup) -> Redirect to dashboard
   if (session && location.pathname.includes("/auth")) {
     return <Navigate to="/dashboard" replace />;
   }

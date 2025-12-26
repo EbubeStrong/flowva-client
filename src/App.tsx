@@ -20,6 +20,13 @@ function App() {
 
   return (
     <Routes>
+      <Route path="/" element={
+        <CheckAuth >
+        <AuthLayout />
+        </CheckAuth>
+        }>
+        <Route index element={<AuthLogin />} />
+      </Route>
 
       <Route
         path="/auth"

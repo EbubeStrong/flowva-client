@@ -50,7 +50,6 @@ function ForgotPassword() {
                 formData={formData}
                 setFormData={setFormData}
                 onSubmit={onSubmit}
-                isBtnDisabled={true}
                 loading={isLoading}
             />
 

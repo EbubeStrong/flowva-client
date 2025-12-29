@@ -35,7 +35,6 @@ function AppSidebar({
   showActive: string;
 }) {
   const { session } = useAuth()
-  // console.log(session?.user)
   const handleLogout = async () => {
   await supabase.auth.signOut();
   window.location.href = "/auth/signin";

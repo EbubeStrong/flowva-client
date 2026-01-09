@@ -12,10 +12,11 @@ import { useAuth } from "../../providers/useAuth";
 import { supabase } from "../../lib/supabase";
 
 
-function DashboardHeader({ title, titleSpan, showActive }: { title: string, titleSpan?: string, showActive: string }) {
+function DashboardHeader({ greetingTitle, userNameTitleSpan, showActive }: { greetingTitle: string, userNameTitleSpan?: string, showActive: string }) {
     const [open, setOpen] = useState(false);
 
     const { session } = useAuth()
+    // console.log(session)
     
     // HANDLE LOGOUT
     const handleLogout = async () => {
@@ -71,7 +72,7 @@ function DashboardHeader({ title, titleSpan, showActive }: { title: string, titl
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="w-full flex-col py-3 justify-start px-6 bg-transparent cursor-pointer"
+                                            className="w-full flex-col py-3 justify-start px-6 bg-transparent cursor-pointer hover:bg-transparent"
                                         >
                                             {session?.user && (
                                                 <div className="flex gap-3 items-center border-black/10">
@@ -83,9 +84,12 @@ function DashboardHeader({ title, titleSpan, showActive }: { title: string, titl
 
                                                     <div className="min-w-0">
                                                         {!open ? null : (
-                                                            <h3 className="break-words whitespace-normal">
-                                                                {session.user.email}
-                                                            </h3>
+                                                            <div className="flex flex-col items-start">
+                                                            <span>{session?.user?.user_metadata?.full_name}</span>
+                                                            <span className="break-words whitespace-normal font-light">
+                                                                {session.user?.email}
+                                                            </span>
+                                                            </div>
                                                         )}
                                                     </div>
                                                 </div>
@@ -123,10 +127,10 @@ function DashboardHeader({ title, titleSpan, showActive }: { title: string, titl
                     </Sheet>
 
 
-                    <div className="flex ml-2 md:ml-0 w-fit items-center gap-1">
-                        <h1 className=" whitespace-nowrap text-xl md:text-[1.5rem] font-medium">{title}</h1>
-                        {titleSpan && (
-                            <span className="text-[#9013FE] text-xl md:text-[1.5rem] truncate w-30 md:52.5 overflow-hidden block font-medium">{titleSpan}</span>
+                    <div className="flex flex-col md:flex-row items-start ml-2 md:ml-0 w-fit  gap-1">
+                        <h1 className=" whitespace-nowrap text-xl md:text-[1.5rem] font-medium">{greetingTitle}</h1>
+                        {userNameTitleSpan && (
+                            <span className="text-[#9013FE] text-xl md:text-[1.5rem] truncate  overflow-hidden block font-medium">{userNameTitleSpan}</span>
                         )}
 
 

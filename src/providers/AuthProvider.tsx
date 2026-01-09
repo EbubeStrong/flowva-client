@@ -3,13 +3,12 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 import { toast } from "sonner";
 import { AuthContext } from "./AuthContext";
+import { ensureProfileExists } from "../services/profileService";
 
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-
-
 
 
   useEffect(() => {
@@ -45,6 +44,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => data.subscription.unsubscribe();
   }, []);
+
+useEffect(() => {
+  if (session?.user && session.user.email) {
+    // Ensure email is defined before passing to ensureProfileExists
+    ensureProfileExists({ ...session.user, email: session.user.email });
+  }
+}, [session]);
+
 
   return (
     <AuthContext.Provider value={{ session, loading }}>

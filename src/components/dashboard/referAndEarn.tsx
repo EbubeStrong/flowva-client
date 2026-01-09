@@ -1,68 +1,94 @@
-import React from 'react';
-import { Star, Share2, Users, Copy, Facebook, Linkedin, MessageCircle } from 'lucide-react';
-import {  Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Users, Copy, Facebook, Linkedin, MessageCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from "../../providers/useAuth";
+
+interface Profile {
+  referral_code: string;
+  referrals_count: number;
+}
 
 const ReferAndEarn = () => {
-  // Data for the "Earn More Points" grid
-  const earnMorePoints = [
-    {
-      title: "Refer and win 10,000 points!",
-      icon: <Star className="w-5 h-5 text-purple-600" />,
-      description: "Invite 3 friends by Nov 20 and earn a chance to be one of 5 winners of 10,000 points. Friends must complete onboarding to qualify.",
-      bgColor: "bg-white",
-      headerBg: "bg-[#fdfaff]"
-    },
-    {
-      title: "Share Your Stack",
-      subtitle: "Earn +25 pts",
-      icon: <Share2 className="w-5 h-5 text-purple-600" />,
-      description: "Share your tool stack",
-      buttonLabel: "Share",
-      bgColor: "bg-white",
-      headerBg: "bg-[#fdfaff]"
-    }
-  ];
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const referralLink = "https://app.flowvahub.com/signup/?ref=stron5987";
+  const { session } = useAuth();
+  const user = session?.user;
+
+  useEffect(() => {
+  if (!user) return;
+
+  const fetchProfile = async () => {
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from("referral_profiles")
+      .select("referral_code, referrals_count")
+      .eq("id", user.id)
+      .single();
+
+    // console.log("Fetched profile:", data, error); 
+
+    if (!error && data) setProfile(data);
+
+    setLoading(false);
+  };
+
+  fetchProfile();
+}, [user]);
+
+
+  const referralLink = profile
+    ? `https://flowva-beta.vercel.app/auth/signup/?ref=${profile.referral_code}`
+    : "";
+
 
   return (
-    <div className="space-y-10 pt-10 bg-white">
-      
+    <div className="space-y-10 pt-10 ">
+
       {/* SECTION: Earn More Points */}
       <section>
         <h2 className="text-lg md:text-2xl my-3 text-black border-l-4 border-[#9301fe] pl-3 font-semibold">
           Earn More Points
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {earnMorePoints.map((card, index) => (
-            <div key={index} className="shadow-[0_5px_15px_rgba(0,0,0,0.05)] rounded-3xl border border-[#f3f4f6] overflow-hidden bg-white">
-              {/* Card Header */}
-              <div className={`p-4 flex items-center justify-between border-b border-[#f3f4f6] ${card.headerBg}`}>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white rounded-xl shadow-sm border border-purple-50">
-                    {card.icon}
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-gray-800">{card.title}</h3>
-                    {card.subtitle && <p className="text-[10px] text-gray-500 font-medium">{card.subtitle}</p>}
-                  </div>
-                </div>
-              </div>
 
-              {/* Card Body */}
-              <div className="p-6 flex justify-between items-center min-h-[120px]">
-                <p className="text-xs text-gray-500 leading-relaxed max-w-[280px]">
-                  {card.description}
-                </p>
-                {card.buttonLabel && (
-                  <button className="flex items-center gap-2 bg-[#f3e8ff] text-[#9013fe] px-4 py-2 rounded-2xl text-xs font-bold hover:bg-[#e9d5ff] transition-colors">
-                    <Share2 className="w-3.5 h-3.5" />
-                    {card.buttonLabel}
-                  </button>
-                )}
+        <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1.5fr_1fr] gap-6">
+          <div className="transition-all hover:border-[#9013fe] hover:-translate-y-1.25 hover:shadow-[0_10px_25px_rgba(0,0,0,0.1)] ease-linear duration-200 border border-[#e5e7eb] rounded-xl overflow-hidden">
+            <div className="p-4 border border-b-[#f3f4f6] border-t-0 border-r-0 border-l-0 bg-white flex items-center gap-3">
+              <div className="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center shrink-0 bg-[rgba(228,144,230,0.1)] text-[#9013fe]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
+                </svg></div>
+              <div>
+                <h3 className="font-semibold">Refer and win 10,000 points!</h3>
               </div>
             </div>
-          ))}
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-sm">Invite 3 friends by Nov 20 and earn a chance to be one of 5 winners of <span className="text-[#9013fe]">10,000 points</span>. Friends must complete onboarding to qualify.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="transition-all hover:border-[#9013fe] hover:-translate-y-1.25 hover:shadow-[0_10px_25px_rgba(0,0,0,0.1)] ease-linear duration-200 border border-[#e5e7eb] rounded-xl overflow-hidden">
+            <div className="p-4 border border-b-[#f3f4f6] border-t-0 border-r-0 border-l-0 bg-white flex items-center gap-3">
+              <div className="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center shrink-0 bg-[rgba(144,_19,_254,_0.1)] text-[#9013fe]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-share2 lucide-share-2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line>
+                </svg></div>
+              <div>
+                <h3 className="font-semibold">Share Your Stack</h3>
+                <p className="text-xs text-gray-500">Earn +25 pts</p>
+              </div>
+            </div>
+            <div className="p-[1rem]"><div className="flex items-center justify-between"><div><p className="font-medium text-sm">Share your tool stack</p>
+            </div>
+              <button className="bg-[#eef2ff] hover:text-white hover:bg-[#9013fe] text-[#9013fe] py-2 px-4 rounded-full font-semibold text-sm transition-all duration-200 inline-flex items-center gap-2 border-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-share2 lucide-share-2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg> Share</button>
+            </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -71,7 +97,7 @@ const ReferAndEarn = () => {
         <h2 className="text-xl font-bold flex items-center gap-2 mb-6 border-l-4 border-[#9013fe] pl-3">
           Refer & Earn
         </h2>
-        
+
         <div>
           {/* Header */}
           <div className="flex bg-[#f5f8ff] p-3 rounded-sm items-start gap-4 mb-10">
@@ -87,7 +113,7 @@ const ReferAndEarn = () => {
           {/* Stats Row */}
           <div className="grid grid-cols-2 gap-4 mb-12">
             <div className="text-center">
-              <div className="text-2xl font-medium text-[#9013fe]">0</div>
+              <div className="text-2xl font-medium text-[#9013fe]">  {loading ? "—" : profile?.referrals_count ?? 0}</div>
               <div className="text-xs text-gray-500 font-medium">Referrals</div>
             </div>
             <div className="text-center">
@@ -98,24 +124,33 @@ const ReferAndEarn = () => {
 
           {/* Referral Link Input */}
           <div className="p-3 space-y-2 mb-8">
-            <label className="text-xs font-semibold text-gray-500 ml-1">Your personal referral link:</label>
+            <label className="text-xs font-semibold text-gray-500 ml-1">
+              Your personal referral link:
+            </label>
+
             <div className="relative">
-              <input 
-                readOnly 
-                value={referralLink}
-                className="w-full bg-white border border-gray-100 rounded-xl py-3 px-4 pr-12 text-xs text-gray-600 focus:outline-none shadow-sm"
+              <input
+                readOnly
+                value={loading ? "Loading..." : referralLink}
+                className="w-full bg-white border border-gray-100 rounded py-3 px-4 pr-12 text-xs text-gray-600 focus:outline-none shadow-sm"
               />
-              <button className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-purple-500 hover:bg-purple-50 rounded-lg transition-colors">
+
+              <button
+                onClick={() => navigator.clipboard.writeText(referralLink)}
+                disabled={!referralLink}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-purple-500 hover:bg-purple-50 rounded-lg transition-colors"
+              >
                 <Copy className="w-4 h-4" />
               </button>
             </div>
           </div>
 
+
           {/* Social Icons */}
           <div className="flex justify-center gap-4">
             <SocialIcon bg="bg-[#1877F2] w-2 h-2" icon={<Facebook className="w-4 h-4 fill-current" />} href="hhttps://web.facebook.com/share_channel/" />
             <SocialIcon bg="bg-black  w-2 h-2" icon={<XIcon />} href='https://x.com/intent/post?text=%F0%9F%9A%80%20Join%20me%20on%20Flowva!%0AFlowva%20is%20where%20I%20discover%20top%20tools%2C%20earn%20rewards%2C%20and%20grow%20with%20community%20power.%0A%0AUse%20my%20referral%20link%20to%20sign%20up%20and%20get%20rewarded%20too%3A%0Ahttps%3A%2F%2Fapp.flowvahub.com%2Fsignup%2F%3Fref%3Dstron5987' />
-            <SocialIcon bg="bg-[#0077B5] w-2 h-2" icon={<Linkedin className="w-4 h-4 fill-current" /> } href='https://www.linkedin.com/sharing/share-offsite/?summary=%F0%9F%9A%80%20Join%20me%20on%20Flowva!%0AFlowva%20is%20where%20I%20discover%20top%20tools%2C%20earn%20rewards%2C%20and%20grow%20with%20community%20power.%0A%0AUse%20my%20referral%20link%20to%20sign%20up%20and%20get%20rewarded%20too%3A%0Ahttps%3A%2F%2Fapp.flowvahub.com%2Fsignup%2F%3Fref%3Dstron5987'/>
+            <SocialIcon bg="bg-[#0077B5] w-2 h-2" icon={<Linkedin className="w-4 h-4 fill-current" />} href='https://www.linkedin.com/sharing/share-offsite/?summary=%F0%9F%9A%80%20Join%20me%20on%20Flowva!%0AFlowva%20is%20where%20I%20discover%20top%20tools%2C%20earn%20rewards%2C%20and%20grow%20with%20community%20power.%0A%0AUse%20my%20referral%20link%20to%20sign%20up%20and%20get%20rewarded%20too%3A%0Ahttps%3A%2F%2Fapp.flowvahub.com%2Fsignup%2F%3Fref%3Dstron5987' />
             <SocialIcon bg="bg-[#25D366] w-2 h-2" icon={<MessageCircle className="w-4 h-4 fill-current" />} href='https://api.whatsapp.com/send?text=%F0%9F%9A%80%20Join%20me%20on%20Flowva!%0AFlowva%20is%20where%20I%20discover%20top%20tools%2C%20earn%20rewards%2C%20and%20grow%20with%20community%20power.%0A%0AUse%20my%20referral%20link%20to%20sign%20up%20and%20get%20rewarded%20too%3A%0Ahttps%3A%2F%2Fapp.flowvahub.com%2Fsignup%2F%3Fref%3Dstron5987' />
           </div>
         </div>

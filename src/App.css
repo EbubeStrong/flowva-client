@@ -3,11 +3,13 @@
     margin: 0;
 } */
 
-*, :before, :after {
-    /* box-sizing: border-box; */
-    /* border-width: 0; */
-    /* border-style: solid; */
-    /* border-color: #e5e7eb; */
+*,
+:before,
+:after {
+  /* box-sizing: border-box; */
+  /* border-width: 0; */
+  /* border-style: solid; */
+  /* border-color: #e5e7eb; */
 }
 
 /* :before, :after {
@@ -15,9 +17,11 @@
 } */
 
 .notification-container {
-    position: relative;
-    border-radius: 50%;
-    background-color: #e2e8f0;
+  position: relative;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  width: 40px;
+  height: 40px;
 }
 
 .notification-bell {
@@ -56,74 +60,81 @@
   font-weight: 700;
 }
 
-
 /* Home Banner */
 .banner-1 {
-    background: linear-gradient(135deg, #9013fe, #6c2bd9);
-    color: #fff;
+  background: linear-gradient(135deg, #9013fe, #6c2bd9);
+  color: #fff;
 }
 
 .banner-1:before {
-    content: "";
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 200px;
-    height: 200px;
-    background: #ffffff1a;
-    border-radius: 50%;
-    z-index: 1;
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  background: #ffffff1a;
+  border-radius: 50%;
+  z-index: 1;
 }
 
 .banner {
-    width: 100% !important;
-    border-radius: 16px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 210px;
+  width: 100% !important;
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 210px;
 }
 
 .icon-section {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .banner-image {
-    width: 120px;
-    border-radius: 24px;
-    -o-object-fit: cover;
-    object-fit: cover;
-    background: #fff3;
-    flex-shrink: 0;
-    padding: 12px;
-    box-shadow: 0 4px 12px #0000001a;
+  width: 120px;
+  border-radius: 24px;
+  -o-object-fit: cover;
+  object-fit: cover;
+  background: #fff3;
+  flex-shrink: 0;
+  padding: 12px;
+  box-shadow: 0 4px 12px #0000001a;
 }
-img, video {
-    max-width: 100%;
-    height: auto;
+img,
+video {
+  max-width: 100%;
+  height: auto;
 }
-img, svg, video, canvas, audio, iframe, embed, object {
-    display: block;
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
 }
 
 .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
-
 
 /* Custom breathing animation */
 @keyframes breathe {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
   50% {
-    transform: scale(1.18); 
-    opacity: 0.85; 
+    transform: scale(1.18);
+    opacity: 0.85;
   }
 }
 

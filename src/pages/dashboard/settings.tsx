@@ -33,7 +33,7 @@ function AccountSettingDashboard() {
         }
 
         const { error } = await supabase
-            .from("profiles")
+            .from("referral_profiles")
             .update({
                 first_name: formData.firstName,
                 last_name: formData.lastName,
@@ -65,14 +65,14 @@ function AccountSettingDashboard() {
             }));
 
             const { data, error } = await supabase
-                .from("profiles")
+                .from("referral_profiles")
                 .select("first_name, last_name")
                 .eq("user_id", user.id)
                 .single();
 
             // Create row if missing
             if (error?.code === "PGRST116") {
-                await supabase.from("profiles").insert({
+                await supabase.from("referral_profiles").insert({
                     user_id: user.id,
                     first_name: "",
                     last_name: "",

@@ -46,11 +46,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
 useEffect(() => {
-  if (session?.user && session.user.email) {
-    // Ensure email is defined before passing to ensureProfileExists
-    ensureProfileExists({ ...session.user, email: session.user.email });
+  if (!session?.user || !session.user.email) return;
+
+  // Skip profile creation if we're in the signup flow (register.tsx will handle it)
+  const referralCodeChecked = localStorage.getItem("referral_code_checked");
+  if (referralCodeChecked === "true") {
+    console.log("[AuthProvider] Skipping ensureProfileExists - signup flow will handle it");
+    return;
   }
+
+  // Only create profile for existing users (login flow)
+  ensureProfileExists({ ...session.user, email: session.user.email });
 }, [session]);
+
 
 
   return (

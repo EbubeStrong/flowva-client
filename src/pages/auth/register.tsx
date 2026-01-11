@@ -5,7 +5,8 @@ import { Button } from "../../components/ui/button";
 import { Link } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { toast } from "sonner";
-
+import { ensureProfileExists } from "../../services/profileService";
+import { useAuth } from "../../providers/useAuth";
 
 const initialState = {
   email: "",
@@ -13,11 +14,51 @@ const initialState = {
   confirmPassword: "",
 };
 
-
 function AuthRegister() {
   const [formData, setFormData] = useState<Record<string, string>>(initialState);
   const [isLoading, setIsLoading] = useState(false);
 
+  const { session } = useAuth();
+
+  // 1️⃣ Capture referral code immediately on page load (works for direct URL & OAuth redirect)
+  // 1️⃣ Capture referral code FIRST
+useEffect(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const ref = urlParams.get("ref");
+
+  console.log("[AuthRegister] URL ref param:", ref);
+
+  if (ref) {
+    localStorage.setItem("referral_code", ref);
+    console.log("[AuthRegister] Saved referral_code:", ref);
+  }
+
+  // ✅ mark referral capture as completed
+  localStorage.setItem("referral_code_checked", "true");
+  console.log("[AuthRegister] referral_code_checked = true");
+}, []);
+
+
+// 2️⃣ Ensure profile exists AFTER referral capture
+useEffect(() => {
+  if (!session?.user || !session.user.email) return;
+
+  const checked = localStorage.getItem("referral_code_checked");
+  console.log("[AuthRegister] referral_code_checked:", checked);
+
+  if (checked === "true") {
+    console.log(
+      "[AuthRegister] Calling ensureProfileExists for:",
+      session.user.id,
+      session.user.email
+    );
+
+    ensureProfileExists({ ...session.user, email: session.user.email });
+  }
+}, [session]);
+
+
+  // 3️⃣ Email OTP signup
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
@@ -25,31 +66,33 @@ function AuthRegister() {
       const { error } = await supabase.auth.signInWithOtp({
         email: formData.email,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${window.location.origin}/auth/signup`, // redirect back to signup to capture ref
         },
       });
 
       if (error) throw error;
-
       toast.success("Account created! Check your email to confirm.");
     } catch (error: Error | unknown) {
       const message = error instanceof Error ? error.message : "Authentication failed";
-      toast.error("Signup failed", {
-        description: message,
-      });
+      toast.error("Signup failed", { description: message });
     } finally {
       setIsLoading(false);
     }
   }
 
-
+  // 4️⃣ Google OAuth signup
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
+
+    // ✅ Ensure referral code persists after OAuth redirect
+    const referralCode = localStorage.getItem("referral_code") || "";
+    const redirectTo = referralCode
+      ? `${window.location.origin}/auth/signup?ref=${referralCode}` // redirect to signup page to capture ref
+      : `${window.location.origin}/dashboard`;
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-      },
+      options: { redirectTo },
     });
 
     if (error) {
@@ -59,20 +102,11 @@ function AuthRegister() {
     }
   };
 
-
-  // Capture referral code
-  useEffect(() => {
-    const ref = new URLSearchParams(window.location.search).get("ref");
-    if (ref) localStorage.setItem("referral_code", ref);
-  }, []);
-
-
-
   return (
     <div className="mx-auto w-full max-w-md space-y-6">
       <div className=" mb-7.5">
-        <h1 className="text-2xl text-[#6D28D9] font-semibold  mb-2 text-center w-full  ">Create Your Account</h1>
-        <p className="text-sm text-[#6B7280] text-center w-full ">Sign up to manage your tools</p>
+        <h1 className="text-2xl text-[#6D28D9] font-semibold  mb-2 text-center w-full">Create Your Account</h1>
+        <p className="text-sm text-[#6B7280] text-center w-full">Sign up to manage your tools</p>
       </div>
 
       <CommonForm
@@ -89,12 +123,11 @@ function AuthRegister() {
         <div className="grow h-px bg-[#EDE9FE]"></div>
       </div>
 
-      <Button onClick={handleGoogleSignIn} className="border py-6 px-3.5 text-sm md:text-md w-full gap-2 bg-transparent text-[#111827] border-[#EDE9FE] rounded-md hover:bg-[#F5F3FF] transition-colors flex items-center justify-center relative cursor-pointer">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 16 16"
-          className="w-10 h-10"
-        >
+      <Button
+        onClick={handleGoogleSignIn}
+        className="border py-6 px-3.5 text-sm md:text-md w-full gap-2 bg-transparent text-[#111827] border-[#EDE9FE] rounded-md hover:bg-[#F5F3FF] transition-colors flex items-center justify-center relative cursor-pointer"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="w-10 h-10">
           <g fill="none" fillRule="evenodd" clipRule="evenodd">
             <path fill="#f44336" d="M7.209 1.061c.725-.081 1.154-.081 1.933 0a6.57 6.57 0 0 1 3.65 1.82a100 100 0 0 0-1.986 1.93q-1.876-1.59-4.188-.734q-1.696.78-2.362 2.528a78 78 0 0 1-2.148-1.658a.26.26 0 0 0-.16-.027q1.683-3.245 5.26-3.86" opacity={0.987}></path>
             <path fill="#ffc107" d="M1.946 4.92q.085-.013.161.027a78 78 0 0 0 2.148 1.658A7.6 7.6 0 0 0 4.04 7.99q.037.678.215 1.331L2 11.116Q.527 8.038 1.946 4.92" opacity={0.997}></path>
@@ -102,12 +135,17 @@ function AuthRegister() {
             <path fill="#43a047" d="M4.255 9.322q1.23 3.057 4.51 2.854a3.94 3.94 0 0 0 1.718-.626q1.148.812 2.202 1.74a6.62 6.62 0 0 1-4.027 1.684a6.4 6.4 0 0 1-1.02 0Q3.82 14.524 2 11.116z" opacity={0.993}></path>
           </g>
         </svg>
-
         <span>Sign in with Google</span>
       </Button>
 
       <div className="text-center mt-5 text-sm">
-        <p className="text-[#6B7280]">Don't have an account? <Link to="/auth/signin" className="text-[#9013fe]  no-underline font-medium hover:underline">Login</Link></p></div>
+        <p className="text-[#6B7280]">
+          Don't have an account?{" "}
+          <Link to="/auth/signin" className="text-[#9013fe] no-underline font-medium hover:underline">
+            Login
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

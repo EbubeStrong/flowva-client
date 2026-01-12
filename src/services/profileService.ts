@@ -204,7 +204,8 @@ export const ensureProfileExists = async (user: UserProfile) => {
   }
 
   //  Insert new profile
-  const { data: insertedProfile, error: insertError } = await supabase
+  // const { data: insertedProfile, error: insertError } = await supabase
+  const {  error: insertError } = await supabase
     .from("referral_profiles")
     .insert({
       id: user.id,

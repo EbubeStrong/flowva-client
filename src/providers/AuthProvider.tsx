@@ -51,7 +51,7 @@ useEffect(() => {
   // Skip profile creation if we're in the signup flow (register.tsx will handle it)
   const referralCodeChecked = localStorage.getItem("referral_code_checked");
   if (referralCodeChecked === "true") {
-    console.log("[AuthProvider] Skipping ensureProfileExists - signup flow will handle it");
+    // console.log("[AuthProvider] Skipping ensureProfileExists - signup flow will handle it");
     return;
   }
 

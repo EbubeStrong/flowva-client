@@ -20,45 +20,45 @@ function AuthRegister() {
 
   const { session } = useAuth();
 
-  // 1️⃣ Capture referral code immediately on page load (works for direct URL & OAuth redirect)
-  // 1️⃣ Capture referral code FIRST
+  //  Capture referral code immediately on page load (works for direct URL & OAuth redirect)
+  //  Capture referral code FIRST
 useEffect(() => {
   const urlParams = new URLSearchParams(window.location.search);
   const ref = urlParams.get("ref");
 
-  console.log("[AuthRegister] URL ref param:", ref);
+  // console.log("[AuthRegister] URL ref param:", ref);
 
   if (ref) {
     localStorage.setItem("referral_code", ref);
-    console.log("[AuthRegister] Saved referral_code:", ref);
+    // console.log("[AuthRegister] Saved referral_code:", ref);
   }
 
-  // ✅ mark referral capture as completed
+  // mark referral capture as completed
   localStorage.setItem("referral_code_checked", "true");
-  console.log("[AuthRegister] referral_code_checked = true");
+  // console.log("[AuthRegister] referral_code_checked = true");
 }, []);
 
 
-// 2️⃣ Ensure profile exists AFTER referral capture
+// Ensure profile exists AFTER referral capture
 useEffect(() => {
   if (!session?.user || !session.user.email) return;
 
   const checked = localStorage.getItem("referral_code_checked");
-  console.log("[AuthRegister] referral_code_checked:", checked);
+  // console.log("[AuthRegister] referral_code_checked:", checked);
 
   if (checked === "true") {
-    console.log(
-      "[AuthRegister] Calling ensureProfileExists for:",
-      session.user.id,
-      session.user.email
-    );
+    // console.log(
+    //   "[AuthRegister] Calling ensureProfileExists for:",
+    //   session.user.id,
+    //   session.user.email
+    // );
 
     ensureProfileExists({ ...session.user, email: session.user.email });
   }
 }, [session]);
 
 
-  // 3️⃣ Email OTP signup
+  //  Email OTP signup
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
@@ -80,7 +80,7 @@ useEffect(() => {
     }
   }
 
-  // 4️⃣ Google OAuth signup
+  //  Google OAuth signup
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
 

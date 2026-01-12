@@ -28,7 +28,7 @@ const ReferAndEarn = () => {
       .eq("id", user.id)
       .single();
 
-    console.log("Fetched profile:", data, error); 
+    // console.log("Fetched profile:", data, error); 
     // profile?.referrals_count
 
     if (!error && data) setProfile(data);

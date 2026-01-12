@@ -125,9 +125,9 @@ interface UserProfile {
 }
 
 export const ensureProfileExists = async (user: UserProfile) => {
-  console.log("[ProfileService] Running ensureProfileExists for:", user.id);
+  // console.log("[ProfileService] Running ensureProfileExists for:", user.id);
 
-  // 1️⃣ Check if profile already exists
+  //  Check if profile already exists
   const { data: existingProfile, error: fetchError } = await supabase
     .from("referral_profiles")
     .select("*")
@@ -137,47 +137,47 @@ export const ensureProfileExists = async (user: UserProfile) => {
   // If profile exists (no error or error is not "no rows found"), return early
   if (existingProfile || (fetchError && fetchError.code !== "PGRST116")) {
     if (existingProfile) {
-      console.log("[ProfileService] Existing profile found:", existingProfile);
-      console.log("[ProfileService] Skipping creation & referral logic");
+      // console.log("[ProfileService] Existing profile found:", existingProfile);
+      // console.log("[ProfileService] Skipping creation & referral logic");
     } else if (fetchError) {
-      console.log("[ProfileService] Error checking profile (not PGRST116):", fetchError);
+      // console.log("[ProfileService] Error checking profile (not PGRST116):", fetchError);
     }
     return;
   }
 
-  console.log("[ProfileService] No existing profile, creating new one");
+  // console.log("[ProfileService] No existing profile, creating new one");
 
   const referralCode = generateReferralCode(
     user.user_metadata?.name || user.email
   );
 
   const refCode = localStorage.getItem("referral_code")?.trim();
-  console.log("[ProfileService] referral_code from localStorage:", refCode);
+  // console.log("[ProfileService] referral_code from localStorage:", refCode);
 
   let referredBy: string | null = null;
 
-  // 2️⃣ Handle referral logic
+  // Handle referral logic
   if (refCode) {
-    console.log("[ProfileService] Looking up referrer with code:", refCode);
+    // console.log("[ProfileService] Looking up referrer with code:", refCode);
     const { data: referrer, error } = await supabase
       .from("referral_profiles")
       .select("id, referrals_count, points")
       .eq("referral_code", refCode)
       .single();
 
-    console.log("[ProfileService] Fetched referrer:", referrer);
-    console.log("[ProfileService] Referrer fetch error:", error);
+    // console.log("[ProfileService] Fetched referrer:", referrer);
+    // console.log("[ProfileService] Referrer fetch error:", error);
 
     if (error) {
-      console.error("[ProfileService] Error fetching referrer with code:", refCode, error);
-      if (error.code === "PGRST116") {
-        console.error("[ProfileService] Referral code not found in database:", refCode);
-      }
+      // console.error("[ProfileService] Error fetching referrer with code:", refCode, error);
+      // if (error.code === "PGRST116") {
+      //   console.error("[ProfileService] Referral code not found in database:", refCode);
+      // }
     }
 
     if (referrer && referrer.id !== user.id) {
       referredBy = referrer.id;
-      console.log("[ProfileService] Setting referredBy to:", referredBy);
+      // console.log("[ProfileService] Setting referredBy to:", referredBy);
 
       const { error: updateError } = await supabase
         .from("referral_profiles")
@@ -188,22 +188,22 @@ export const ensureProfileExists = async (user: UserProfile) => {
         .eq("id", referrer.id);
 
       if (updateError) {
-        console.error("[ProfileService] Error updating referrer:", updateError);
+        // console.error("[ProfileService] Error updating referrer:", updateError);
       } else {
-        console.log("[ProfileService] Referrer updated successfully:", {
-          referrerId: referrer.id,
-          newReferralsCount: (referrer.referrals_count || 0) + 1,
-          newPoints: (referrer.points || 0) + 25,
-        });
+        // console.log("[ProfileService] Referrer updated successfully:", {
+        //   referrerId: referrer.id,
+        //   newReferralsCount: (referrer.referrals_count || 0) + 1,
+        //   newPoints: (referrer.points || 0) + 25,
+        // });
       }
     } else if (referrer && referrer.id === user.id) {
-      console.log("[ProfileService] Referrer ID matches user ID, skipping self-referral");
+      // console.log("[ProfileService] Referrer ID matches user ID, skipping self-referral");
     }
   } else {
-    console.log("[ProfileService] No referral code present in localStorage");
+    // console.log("[ProfileService] No referral code present in localStorage");
   }
 
-  // 3️⃣ Insert new profile
+  //  Insert new profile
   const { data: insertedProfile, error: insertError } = await supabase
     .from("referral_profiles")
     .insert({
@@ -215,21 +215,21 @@ export const ensureProfileExists = async (user: UserProfile) => {
       points: 0,
     });
 
-  console.log("[ProfileService] Inserted profile:", insertedProfile);
-  console.log("[ProfileService] Insert error:", insertError);
+  // console.log("[ProfileService] Inserted profile:", insertedProfile);
+  // console.log("[ProfileService] Insert error:", insertError);
 
   // Handle duplicate key error (profile was created between check and insert - race condition)
   if (insertError) {
     if (insertError.code === "23505") {
-      console.log("[ProfileService] Profile already exists (duplicate key) - race condition detected, skipping");
+      // console.log("[ProfileService] Profile already exists (duplicate key) - race condition detected, skipping");
       return;
     } else {
-      console.error("[ProfileService] Error inserting profile:", insertError);
+      // console.error("[ProfileService] Error inserting profile:", insertError);
       return;
     }
   }
 
-  // 4️⃣ Create referral_reward record if referral was successful
+  //  Create referral_reward record if referral was successful
   if (referredBy) {
     const { error: rewardError } = await supabase
       .from("referral_rewards")
@@ -240,16 +240,16 @@ export const ensureProfileExists = async (user: UserProfile) => {
       });
 
     if (rewardError) {
-      console.error("[ProfileService] Error creating referral_reward:", rewardError);
+      // console.error("[ProfileService] Error creating referral_reward:", rewardError);
     } else {
-      console.log("[ProfileService] Referral reward created successfully for referrer:", referredBy);
+      // console.log("[ProfileService] Referral reward created successfully for referrer:", referredBy);
     }
   }
 
-  // 5️⃣ Cleanup
+  //  Cleanup
   localStorage.removeItem("referral_code");
   localStorage.removeItem("referral_code_checked");
 
-  console.log("[ProfileService] Cleared referral localStorage");
+  // console.log("[ProfileService] Cleared referral localStorage");
 };
 

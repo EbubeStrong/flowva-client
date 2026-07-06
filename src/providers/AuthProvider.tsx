@@ -1,69 +1,69 @@
-import { useEffect, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
-import { supabase } from "../lib/supabase";
-import { toast } from "sonner";
-import { AuthContext } from "./AuthContext";
-import { ensureProfileExists } from "../services/profileService";
+// import { useEffect, useState } from "react";
+// import type { Session } from "@supabase/supabase-js";
+// // import { supabase } from "../lib/supabase";
+// // import { toast } from "sonner";
+// // import { AuthContext } from "./AuthContext";
+// // import { ensureProfileExists } from "../services/profileService";
 
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+// export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+//   const [session, setSession] = useState<Session | null>(null);
+//   const [loading, setLoading] = useState(true);
 
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token_hash = params.get("token_hash");
-    const type = params.get("type") as "email" | "sms" | null;
+//   useEffect(() => {
+//     const params = new URLSearchParams(window.location.search);
+//     const token_hash = params.get("token_hash");
+//     const type = params.get("type") as "email" | "sms" | null;
 
-    const verifyMagicLink = async () => {
-      if (!token_hash || type !== "email") return;
+//   //   const verifyMagicLink = async () => {
+//   //     if (!token_hash || type !== "email") return;
 
-      const { error } = await supabase.auth.verifyOtp({ token_hash, type });
+//   //     const { error } = await supabase.auth.verifyOtp({ token_hash, type });
 
-      if (error) {
-        toast.error("Authentication failed", { description: error.message });
-      } else {
-        toast.success("Authentication successful");
-      }
+//   //     if (error) {
+//   //       toast.error("Authentication failed", { description: error.message });
+//   //     } else {
+//   //       toast.success("Authentication successful");
+//   //     }
 
-      window.history.replaceState({}, document.title, "/");
-    };
+//   //     window.history.replaceState({}, document.title, "/");
+//   //   };
 
-    verifyMagicLink();
+//   //   verifyMagicLink();
 
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
-    });
+//   //   supabase.auth.getSession().then(({ data }) => {
+//   //     setSession(data.session);
+//   //     setLoading(false);
+//   //   });
 
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setLoading(false); 
-    });
+//   //   const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+//   //     setSession(session);
+//   //     setLoading(false); 
+//   //   });
 
-    return () => data.subscription.unsubscribe();
-  }, []);
+//   //   return () => data.subscription.unsubscribe();
+//   // }, []);
 
-useEffect(() => {
-  if (!session?.user || !session.user.email) return;
+// useEffect(() => {
+//   if (!session?.user || !session.user.email) return;
 
-  // Skip profile creation if we're in the signup flow (register.tsx will handle it)
-  const referralCodeChecked = localStorage.getItem("referral_code_checked");
-  if (referralCodeChecked === "true") {
-    // console.log("[AuthProvider] Skipping ensureProfileExists - signup flow will handle it");
-    return;
-  }
+//   // Skip profile creation if we're in the signup flow (register.tsx will handle it)
+//   const referralCodeChecked = localStorage.getItem("referral_code_checked");
+//   if (referralCodeChecked === "true") {
+//     // console.log("[AuthProvider] Skipping ensureProfileExists - signup flow will handle it");
+//     return;
+//   }
 
-  // Only create profile for existing users (login flow)
-  ensureProfileExists({ ...session.user, email: session.user.email });
-}, [session]);
+//   // Only create profile for existing users (login flow)
+//   ensureProfileExists({ ...session.user, email: session.user.email });
+// }, [session]);
 
 
 
-  return (
-    <AuthContext.Provider value={{ session, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+//   return (
+//     <AuthContext.Provider value={{ session, loading }}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };

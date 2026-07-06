@@ -4,7 +4,7 @@ import spotlightIcon from "../../assets/spotlight.png";
 import { Button } from "../ui/button";
 import ReferAndEarn from "./referAndEarn";
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
+// import { supabase } from "../../lib/supabase";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import {
@@ -87,156 +87,156 @@ export default function RewardEarning() {
         return { label, status: "upcoming" }; // all other days gray
     });
 
-    const claimToday = async () => {
-        if (claimedToday || loading) return;
+    // const claimToday = async () => {
+    //     if (claimedToday || loading) return;
 
-        setLoading(true);
-        try {
-            const {
-                data: { user },
-                error: userErr,
-            } = await supabase.auth.getUser();
+    //     setLoading(true);
+    //     try {
+    //         const {
+    //             data: { user },
+    //             error: userErr,
+    //         } = await supabase.auth.getUser();
 
-            if (userErr || !user) {
-                toast.error("Unable to identify user");
-                return;
-            }
+    //         if (userErr || !user) {
+    //             toast.error("Unable to identify user");
+    //             return;
+    //         }
 
-            // fetch existing row
-            const { data: row, error } = await supabase
-                .from("flowva_rewards")
-                .select("points, streak, last_claim_date")
-                .eq("user_id", user.id)
-                .single();
+    //         // fetch existing row
+    //         const { data: row, error } = await supabase
+    //             .from("flowva_rewards")
+    //             .select("points, streak, last_claim_date")
+    //             .eq("user_id", user.id)
+    //             .single();
 
-            if (error && error.code !== "PGRST116") {
-                console.error("fetch error", error);
-                toast.error("Failed to fetch rewards");
-                return;
-            }
+    //         if (error && error.code !== "PGRST116") {
+    //             console.error("fetch error", error);
+    //             toast.error("Failed to fetch rewards");
+    //             return;
+    //         }
 
-            if (!row) {
-                // create new row with today's claim
-                const { data: newRow, error: insertErr } = await supabase
-                    .from("flowva_rewards")
-                    .insert({
-                        user_id: user.id,
-                        points: 5,
-                        streak: 1,
-                        last_claim_date: today,
-                    })
-                    .select()
-                    .single();
+    //         if (!row) {
+    //             // create new row with today's claim
+    //             const { data: newRow, error: insertErr } = await supabase
+    //                 .from("flowva_rewards")
+    //                 .insert({
+    //                     user_id: user.id,
+    //                     points: 5,
+    //                     streak: 1,
+    //                     last_claim_date: today,
+    //                 })
+    //                 .select()
+    //                 .single();
 
-                if (insertErr) {
-                    console.error("insert error", insertErr);
-                    toast.error("Failed to claim points");
-                    return;
-                }
+    //             if (insertErr) {
+    //                 console.error("insert error", insertErr);
+    //                 toast.error("Failed to claim points");
+    //                 return;
+    //             }
 
-                setPoints(newRow.points);
-                setStreak(newRow.streak);
-                setLastClaimDate(newRow.last_claim_date);
-                toast.success("Claimed 5 points");
-                return;
-            }
+    //             setPoints(newRow.points);
+    //             setStreak(newRow.streak);
+    //             setLastClaimDate(newRow.last_claim_date);
+    //             toast.success("Claimed 5 points");
+    //             return;
+    //         }
 
-            // already have a row
-            if (row.last_claim_date === today) {
-                setLastClaimDate(row.last_claim_date);
-                setLoading(false);
-                return;
-            }
+    //         // already have a row
+    //         if (row.last_claim_date === today) {
+    //             setLastClaimDate(row.last_claim_date);
+    //             setLoading(false);
+    //             return;
+    //         }
 
 
-            const newStreak = row.last_claim_date === yesterday ? row.streak + 1 : 1;
-            const newPoints = (row.points ?? 0) + 5;
+    //         const newStreak = row.last_claim_date === yesterday ? row.streak + 1 : 1;
+    //         const newPoints = (row.points ?? 0) + 5;
 
-            const { data: updated, error: updateErr } = await supabase
-                .from("flowva_rewards")
-                .update({
-                    points: newPoints,
-                    streak: newStreak,
-                    last_claim_date: today,
-                })
-                .eq("user_id", user.id)
-                .select()
-                .single();
+    //         const { data: updated, error: updateErr } = await supabase
+    //             .from("flowva_rewards")
+    //             .update({
+    //                 points: newPoints,
+    //                 streak: newStreak,
+    //                 last_claim_date: today,
+    //             })
+    //             .eq("user_id", user.id)
+    //             .select()
+    //             .single();
 
-            if (updateErr) {
-                console.error("update error", updateErr);
-                toast.error("Failed to update rewards");
-                return;
-            }
+    //         if (updateErr) {
+    //             console.error("update error", updateErr);
+    //             toast.error("Failed to update rewards");
+    //             return;
+    //         }
 
-            setPoints(updated.points);
-            setStreak(updated.streak);
-            setLastClaimDate(updated.last_claim_date);
-            toast.success("Claimed 5 points");
-        } catch (e) {
-            console.error(e);
-            toast.error("Something went wrong");
-        } finally {
-            setLoading(false);
-        }
-    };
+    //         setPoints(updated.points);
+    //         setStreak(updated.streak);
+    //         setLastClaimDate(updated.last_claim_date);
+    //         toast.success("Claimed 5 points");
+    //     } catch (e) {
+    //         console.error(e);
+    //         toast.error("Something went wrong");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
-    useEffect(() => {
-        async function loadRewards() {
-            setLoading(true);
-            try {
-                const {
-                    data: { user },
-                    error: userErr,
-                } = await supabase.auth.getUser();
+    // useEffect(() => {
+    //     async function loadRewards() {
+    //         setLoading(true);
+    //         try {
+    //             const {
+    //                 data: { user },
+    //                 error: userErr,
+    //             } = await supabase.auth.getUser();
 
-                if (userErr || !user) {
-                    // user not signed in — keep defaults
-                    setLoading(false);
-                    return;
-                }
+    //             if (userErr || !user) {
+    //                 // user not signed in — keep defaults
+    //                 setLoading(false);
+    //                 return;
+    //             }
 
-                const { data, error } = await supabase
-                    .from("flowva_rewards")
-                    .select("points, streak, last_claim_date")
-                    .eq("user_id", user.id)
-                    .single();
+    //             const { data, error } = await supabase
+    //                 .from("flowva_rewards")
+    //                 .select("points, streak, last_claim_date")
+    //                 .eq("user_id", user.id)
+    //                 .single();
 
-                if (error && error.code === "PGRST116") {
-                    // row not found — create default
-                    const { data: newRow, error: insertErr } = await supabase
-                        .from("flowva_rewards")
-                        .insert({
-                            user_id: user.id,
-                            points: 0,
-                            streak: 0,
-                            last_claim_date: null,
-                        })
-                        .select()
-                        .single();
+    //             if (error && error.code === "PGRST116") {
+    //                 // row not found — create default
+    //                 const { data: newRow, error: insertErr } = await supabase
+    //                     .from("flowva_rewards")
+    //                     .insert({
+    //                         user_id: user.id,
+    //                         points: 0,
+    //                         streak: 0,
+    //                         last_claim_date: null,
+    //                     })
+    //                     .select()
+    //                     .single();
 
-                    if (!insertErr && newRow) {
-                        setPoints(newRow.points ?? 0);
-                        setStreak(newRow.streak ?? 0);
-                        setLastClaimDate(newRow.last_claim_date ?? null);
-                    }
-                } else if (data) {
-                    setPoints(data.points ?? 0);
-                    setStreak(data.streak ?? 0);
-                    setLastClaimDate(data.last_claim_date ?? null);
-                } else if (error) {
-                    console.error("load error", error);
-                    toast.error("Failed to load rewards");
-                }
-            } catch (e) {
-                console.error(e);
-            } finally {
-                setLoading(false);
-            }
-        }
+    //                 if (!insertErr && newRow) {
+    //                     setPoints(newRow.points ?? 0);
+    //                     setStreak(newRow.streak ?? 0);
+    //                     setLastClaimDate(newRow.last_claim_date ?? null);
+    //                 }
+    //             } else if (data) {
+    //                 setPoints(data.points ?? 0);
+    //                 setStreak(data.streak ?? 0);
+    //                 setLastClaimDate(data.last_claim_date ?? null);
+    //             } else if (error) {
+    //                 console.error("load error", error);
+    //                 toast.error("Failed to load rewards");
+    //             }
+    //         } catch (e) {
+    //             console.error(e);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     }
 
-        loadRewards();
-    }, []);
+    //     loadRewards();
+    // }, []);
 
     return (
         <div className="no-scrollbar">
@@ -325,7 +325,7 @@ export default function RewardEarning() {
                                         </div>
 
                                         <button
-                                            onClick={claimToday}
+                                            // onClick={claimToday}
                                             disabled={claimedToday || loading}
                                             className={`w-full py-3 rounded-2xl font-bold flex items-center justify-center gap-2
     ${claimedToday

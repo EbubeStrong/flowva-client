@@ -15,12 +15,12 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import Logo from "../../assets/flowva-logo.png";
 import { NavItems } from "../../components/common/navigation";
-import { useAuth } from "../../providers/useAuth";
+// import { useAuth } from "../../providers/useAuth";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import { Separator } from "../../components/ui/separator";
 import { Button } from "../../components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
-import { supabase } from "../../lib/supabase";
+// import { supabase } from "../../lib/supabase";
 
 
 
@@ -34,11 +34,11 @@ function AppSidebar({
   location: ReturnType<typeof useLocation>;
   showActive: string;
 }) {
-  const { session } = useAuth()
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/auth/signin";
-  };
+  // const { session } = useAuth()
+  // const handleLogout = async () => {
+  //   await supabase.auth.signOut();
+  //   window.location.href = "/auth/signin";
+  // };
 
   return (
     <SidebarContent className="flex flex-col h-full ">
@@ -91,26 +91,32 @@ function AppSidebar({
                     size="sm"
                     className="w-full flex-col py-3 justify-start px-6 bg-transparent cursor-pointer hover:bg-transparent"
                   >
-                    {session?.user && (
+                    {/* {session?.user && */}
+                     (
                       <div className="flex gap-3 items-center border-black/10">
                         <Avatar>
                           <AvatarFallback className="bg-purple-600 text-white">
-                            {session.user.email?.charAt(0).toUpperCase()}
+                            {/* {session.user.email?.charAt(0).toUpperCase()} */} E
                           </AvatarFallback>
                         </Avatar>
 
                         <div className="min-w-0">
                           {!isOpen ? null : (
                             <div className="flex flex-col items-start">
-                              <span>{session?.user?.user_metadata?.full_name}</span>
+                              <span>
+                                {/* {session?.user?.user_metadata?.full_name} */}
+                                Full name
+                                </span>
                               <span className="break-words whitespace-normal font-light">
-                                {session.user?.email}
+                                {/* {session.user?.email} */} Email
+
                               </span>
                             </div>
                           )}
                         </div>
                       </div>
-                    )}
+                    )
+                    {/* } */}
                   </Button>
                 </DropdownMenuTrigger>
 
@@ -129,7 +135,7 @@ function AppSidebar({
 
                   <DropdownMenuItem
                     className="text-red-600 focus:text-red-600"
-                    onClick={handleLogout}
+                    // onClick={handleLogout}
                   >
                     Logout
                   </DropdownMenuItem>
@@ -149,7 +155,7 @@ function DashboardLayout() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const showActive = location.pathname
-  const { session } = useAuth();
+  // const { session } = useAuth();
 
 
   function getGreetingByTime() {
@@ -160,9 +166,9 @@ function DashboardLayout() {
   }
 
 
-  const user = {
-    name: session?.user?.user_metadata?.name ?? "Guest",
-  };
+  // const user = {
+  //   name: session?.user?.user_metadata?.name ?? "Guest",
+  // };
 
 
   const headerTitleMap: Record<string, string> = {
@@ -176,7 +182,8 @@ function DashboardLayout() {
 
   const isHome = location.pathname === "/dashboard";
   const greetingTitle = isHome ? getGreetingByTime() : headerTitleMap[location.pathname] || "Dashboard";
-  const userNameTitleSpan = isHome ? user?.name : undefined;
+  // const userNameTitleSpan = isHome 
+  //  user?.name : undefined;
 
   return (
     <div className="flex flex-col md:flex-row min-h-dvh lg:h-screen lg:md:overflow-hidden w-full">
@@ -204,7 +211,9 @@ function DashboardLayout() {
       {/* Main content */}
       <main className="w-full bg-gray-50 px-4 lg:pt-8 md:px-9 min-h-screen grow md:overflow-y-auto box-border lg:min-h-0 transition-all duration-300">
         <div className="bg-gray-50 sticky w-full md:fixed md:w-full md:max-w-[70%] lg:max-w-full pr-3 md:pr-14 lg:pr-5 lg:sticky top-0 z-20">
-          <DashboardHeader greetingTitle={greetingTitle} userNameTitleSpan={userNameTitleSpan} showActive={showActive} />
+          <DashboardHeader greetingTitle={greetingTitle} 
+          userNameTitleSpan=""
+          showActive={showActive} />
         </div>
         <div className="md:mt-14 pb-7">
           <Outlet />

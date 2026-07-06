@@ -13,17 +13,17 @@ import TechStackDashboard from "./pages/dashboard/tech-stack";
 import SubscriptionDashboard from "./pages/dashboard/subscriptions";
 import RewardsDashboard from "./pages/dashboard/rewards";
 import AccountSettingDashboard from "./pages/dashboard/settings";
-import CheckAuth from "./components/common/check-auth";
+// import CheckAuth from "./components/common/check-auth";
 // import { useAuth } from "./providers/useAuth";
 
 function App() {
 
   return (
     <Routes>
-      <Route path="/" element={
-        <CheckAuth >
+      {/* <Route path="/" element={
+        // <CheckAuth >
         <AuthLayout />
-        </CheckAuth>
+        // </CheckAuth>
         }>
         <Route index element={<AuthLogin />} />
       </Route>
@@ -31,22 +31,39 @@ function App() {
       <Route
         path="/auth"
         element={
-          <CheckAuth >
+          // <CheckAuth >
             <AuthLayout />
-           </CheckAuth>
+          //  </CheckAuth>
         }
       >
         <Route path="signin" element={<AuthLogin />} />
         <Route path="signup" element={<AuthRegister />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
+      </Route> */}
+
+      <Route
+        path="/"
+        element={
+          // <CheckAuth >
+            <DashboardLayout />
+            // </CheckAuth>
+        }
+      >
+        <Route index element={<HomeDashboard />} />
+        <Route path="discover" element={<DiscoverDashboard />} />
+        <Route path="library" element={<LibraryDashboard />} />
+        <Route path="tech-stack" element={<TechStackDashboard />} />
+        <Route path="subscriptions" element={<SubscriptionDashboard />} />
+        <Route path="earn-rewards" element={<RewardsDashboard />} />
+        <Route path="account-settings" element={<AccountSettingDashboard />} />
       </Route>
 
       <Route
         path="/dashboard"
         element={
-          <CheckAuth >
+          // <CheckAuth >
             <DashboardLayout />
-            </CheckAuth>
+            // </CheckAuth>
         }
       >
         <Route index element={<HomeDashboard />} />

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CommonForm from "../../components/common/form";
 import { forgotPasswordFormControls } from "../../components/config";
-import { supabase } from "../../lib/supabase";
+// import { supabase } from "../../lib/supabase";
 import { toast } from "sonner";
 
 
@@ -13,32 +13,32 @@ function ForgotPassword() {
     const [formData, setFormData] = useState<Record<string, string>>(initialState);
     const [isLoading, setIsLoading] = useState(false)
 
-   async function onSubmit(
-  event: React.FormEvent<HTMLFormElement>
-) {
-  event.preventDefault();
-  setIsLoading(true);
+//    async function onSubmit(
+//   event: React.FormEvent<HTMLFormElement>
+// ) {
+//   event.preventDefault();
+//   setIsLoading(true);
 
-  try {
-    const { error } = await supabase.auth.signInWithOtp({
-      email: formData.email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-      },
-    });
+//   try {
+//     const { error } = await supabase.auth.signInWithOtp({
+//       email: formData.email,
+//       options: {
+//         emailRedirectTo: `${window.location.origin}/dashboard`,
+//       },
+//     });
 
-    if (error) throw error;
+//     if (error) throw error;
 
-    toast.success("Check your email", {
-      description: "We sent you a secure login link to regain access.",
-    });
-  } catch (error) {
-    console.error("Error sending recovery email:", error);
-    toast.error("Unable to send recovery email");
-  } finally {
-    setIsLoading(false);
-  }
-}
+//     toast.success("Check your email", {
+//       description: "We sent you a secure login link to regain access.",
+//     });
+//   } catch (error) {
+//     console.error("Error sending recovery email:", error);
+//     toast.error("Unable to send recovery email");
+//   } finally {
+//     setIsLoading(false);
+//   }
+// }
 
 
     return (
@@ -49,7 +49,7 @@ function ForgotPassword() {
                 buttonText={"Sign in"}
                 formData={formData}
                 setFormData={setFormData}
-                onSubmit={onSubmit}
+                onSubmit={() => {}}
                 loading={isLoading}
             />
 

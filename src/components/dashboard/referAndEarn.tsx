@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Users, Copy, Facebook, Linkedin, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from "../../providers/useAuth";
+// import { supabase } from '../../lib/supabase';
+// import { useAuth } from "../../providers/useAuth";
 
 interface Profile {
   referral_code: string;
@@ -13,31 +13,31 @@ const ReferAndEarn = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const { session } = useAuth();
-  const user = session?.user;
+  // const { session } = useAuth();
+  // const user = session?.user;
 
-  useEffect(() => {
-  if (!user) return;
+//   useEffect(() => {
+//   if (!user) return;
 
-  const fetchProfile = async () => {
-    setLoading(true);
+//   // const fetchProfile = async () => {
+//   //   setLoading(true);
 
-    const { data, error } = await supabase
-      .from("referral_profiles")
-      .select("referral_code, referrals_count")
-      .eq("id", user.id)
-      .single();
+//   //   const { data, error } = await supabase
+//   //     .from("referral_profiles")
+//   //     .select("referral_code, referrals_count")
+//   //     .eq("id", user.id)
+//   //     .single();
 
-    // console.log("Fetched profile:", data, error); 
-    // profile?.referrals_count
+//   //   // console.log("Fetched profile:", data, error); 
+//   //   // profile?.referrals_count
 
-    if (!error && data) setProfile(data);
+//   //   if (!error && data) setProfile(data);
 
-    setLoading(false);
-  };
+//   //   setLoading(false);
+//   // };
 
-  fetchProfile();
-}, [user]);
+//   fetchProfile();
+// }, [user]);
 
 
   const referralLink = profile

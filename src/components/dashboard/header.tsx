@@ -8,21 +8,21 @@ import NotificationDropdown from "./notifications";
 import { Separator } from "../ui/separator";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import { useAuth } from "../../providers/useAuth";
-import { supabase } from "../../lib/supabase";
+// import { useAuth } from "../../providers/useAuth";
+// import { supabase } from "../../lib/supabase";
 
 
 function DashboardHeader({ greetingTitle, userNameTitleSpan, showActive }: { greetingTitle: string, userNameTitleSpan?: string, showActive: string }) {
     const [open, setOpen] = useState(false);
 
-    const { session } = useAuth()
+    // const { session } = useAuth()
     // console.log(session)
     
     // HANDLE LOGOUT
-    const handleLogout = async () => {
-        await supabase.auth.signOut();
-        window.location.href = "/auth/signin";
-    };
+    // const handleLogout = async () => {
+    //     await supabase.auth.signOut();
+    //     window.location.href = "/auth/signin";
+    // };
 
     return (
         <div className=" bg-gray-50 pb-2 flex py-2 pt-3 ">
@@ -74,26 +74,30 @@ function DashboardHeader({ greetingTitle, userNameTitleSpan, showActive }: { gre
                                             size="sm"
                                             className="w-full flex-col py-3 justify-start px-6 bg-transparent cursor-pointer hover:bg-transparent"
                                         >
-                                            {session?.user && (
+                                            {/* {session?.user &&  */}
+                                            (
                                                 <div className="flex gap-3 items-center border-black/10">
                                                     <Avatar>
                                                         <AvatarFallback className="bg-purple-600 text-white">
-                                                            {session.user.email?.charAt(0).toUpperCase()}
+                                                            {/* {session.user.email?.charAt(0).toUpperCase()} */}
                                                         </AvatarFallback>
                                                     </Avatar>
 
                                                     <div className="min-w-0">
                                                         {!open ? null : (
                                                             <div className="flex flex-col items-start">
-                                                            <span>{session?.user?.user_metadata?.full_name}</span>
+                                                            <span>
+                                                                {/* {session?.user?.user_metadata?.full_name} */}
+                                                                </span>
                                                             <span className="break-words whitespace-normal font-light">
-                                                                {session.user?.email}
+                                                                {/* {session.user?.email} */}
                                                             </span>
                                                             </div>
                                                         )}
                                                     </div>
                                                 </div>
-                                            )}
+                                            )
+                                            {/* } */}
                                         </Button>
                                     </DropdownMenuTrigger>
 
@@ -112,7 +116,7 @@ function DashboardHeader({ greetingTitle, userNameTitleSpan, showActive }: { gre
 
                                         <DropdownMenuItem
                                             className="text-red-600 focus:text-red-600"
-                                            onClick={handleLogout}
+                                            // onClick={handleLogout}
                                         >
                                             Logout
                                         </DropdownMenuItem>

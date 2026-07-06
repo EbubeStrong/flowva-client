@@ -3,10 +3,10 @@ import CommonForm from "../../components/common/form";
 import { registerFormControls } from "../../components/config";
 import { Button } from "../../components/ui/button";
 import { Link } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
+// import { supabase } from "../../lib/supabase";
 import { toast } from "sonner";
-import { ensureProfileExists } from "../../services/profileService";
-import { useAuth } from "../../providers/useAuth";
+// import { ensureProfileExists } from "../../services/profileService";
+// import { useAuth } from "../../providers/useAuth";
 
 const initialState = {
   email: "",
@@ -18,7 +18,7 @@ function AuthRegister() {
   const [formData, setFormData] = useState<Record<string, string>>(initialState);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { session } = useAuth();
+  // const { session } = useAuth();
 
   //  Capture referral code immediately on page load (works for direct URL & OAuth redirect)
   //  Capture referral code FIRST
@@ -40,67 +40,67 @@ useEffect(() => {
 
 
 // Ensure profile exists AFTER referral capture
-useEffect(() => {
-  if (!session?.user || !session.user.email) return;
+// useEffect(() => {
+//   if (!session?.user || !session.user.email) return;
 
-  const checked = localStorage.getItem("referral_code_checked");
-  // console.log("[AuthRegister] referral_code_checked:", checked);
+//   const checked = localStorage.getItem("referral_code_checked");
+//   // console.log("[AuthRegister] referral_code_checked:", checked);
 
-  if (checked === "true") {
-    // console.log(
-    //   "[AuthRegister] Calling ensureProfileExists for:",
-    //   session.user.id,
-    //   session.user.email
-    // );
+//   if (checked === "true") {
+//     // console.log(
+//     //   "[AuthRegister] Calling ensureProfileExists for:",
+//     //   session.user.id,
+//     //   session.user.email
+//     // );
 
-    ensureProfileExists({ ...session.user, email: session.user.email });
-  }
-}, [session]);
+//     ensureProfileExists({ ...session.user, email: session.user.email });
+//   }
+// }, [session]);
 
 
   //  Email OTP signup
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: formData.email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/signup`, // redirect back to signup to capture ref
-        },
-      });
+  // async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  //   event.preventDefault();
+  //   setIsLoading(true);
+  //   try {
+  //     const { error } = await supabase.auth.signInWithOtp({
+  //       email: formData.email,
+  //       options: {
+  //         emailRedirectTo: `${window.location.origin}/auth/signup`, // redirect back to signup to capture ref
+  //       },
+  //     });
 
-      if (error) throw error;
-      toast.success("Account created! Check your email to confirm.");
-    } catch (error: Error | unknown) {
-      const message = error instanceof Error ? error.message : "Authentication failed";
-      toast.error("Signup failed", { description: message });
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  //     if (error) throw error;
+  //     toast.success("Account created! Check your email to confirm.");
+  //   } catch (error: Error | unknown) {
+  //     const message = error instanceof Error ? error.message : "Authentication failed";
+  //     toast.error("Signup failed", { description: message });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
 
   //  Google OAuth signup
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
+  // const handleGoogleSignIn = async () => {
+  //   setIsLoading(true);
 
-    // ✅ Ensure referral code persists after OAuth redirect
-    const referralCode = localStorage.getItem("referral_code") || "";
-    const redirectTo = referralCode
-      ? `${window.location.origin}/auth/signup?ref=${referralCode}` // redirect to signup page to capture ref
-      : `${window.location.origin}/dashboard`;
+  //   // ✅ Ensure referral code persists after OAuth redirect
+  //   const referralCode = localStorage.getItem("referral_code") || "";
+  //   const redirectTo = referralCode
+  //     ? `${window.location.origin}/auth/signup?ref=${referralCode}` // redirect to signup page to capture ref
+  //     : `${window.location.origin}/dashboard`;
 
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo },
-    });
+  //   const { error } = await supabase.auth.signInWithOAuth({
+  //     provider: "google",
+  //     options: { redirectTo },
+  //   });
 
-    if (error) {
-      setIsLoading(false);
-      console.error(error.message);
-      toast.error(error.message);
-    }
-  };
+  //   if (error) {
+  //     setIsLoading(false);
+  //     console.error(error.message);
+  //     toast.error(error.message);
+  //   }
+  // };
 
   return (
     <div className="mx-auto w-full max-w-md space-y-6">
@@ -114,7 +114,7 @@ useEffect(() => {
         buttonText={"Sign Up Account"}
         formData={formData}
         setFormData={setFormData}
-        onSubmit={onSubmit}
+        onSubmit={() => {}}
         loading={isLoading}
       />
       <div className="relative flex items-center w-full my-5">
@@ -124,7 +124,7 @@ useEffect(() => {
       </div>
 
       <Button
-        onClick={handleGoogleSignIn}
+        onClick={() => {}}
         className="border py-6 px-3.5 text-sm md:text-md w-full gap-2 bg-transparent text-[#111827] border-[#EDE9FE] rounded-md hover:bg-[#F5F3FF] transition-colors flex items-center justify-center relative cursor-pointer"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="w-10 h-10">

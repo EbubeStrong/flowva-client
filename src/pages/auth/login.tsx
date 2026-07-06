@@ -2,7 +2,7 @@ import { useState } from "react";
 import CommonForm from "../../components/common/form";
 import { loginFormControls } from "../../components/config";
 import { Button } from "../../components/ui/button";
-import { supabase } from "../../lib/supabase";
+// import { supabase } from "../../lib/supabase";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { AuthLoadingScreen } from "../../components/dashboard/authLoading";
@@ -21,48 +21,48 @@ function AuthLogin() {
   const [isLoading, setIsLoading] = useState(false);
 
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: formData.email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
-        },
-      });
+  // async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  //   event.preventDefault();
+  //   setIsLoading(true);
+  //   try {
+  //     const { error } = await supabase.auth.signInWithOtp({
+  //       email: formData.email,
+  //       options: {
+  //         emailRedirectTo: `${window.location.origin}/dashboard`,
+  //       },
+  //     });
 
-      if (error) throw error;
+  //     if (error) throw error;
 
-      toast.success("Check your email for the login link!", {
-        description: "We sent a magic link to your email to log in.",
-      });
-    } catch (error: Error | unknown) {
-      const message = error instanceof Error ? error.message : "Authentication failed";
-      toast.error("Authentication failed", {
-        description: message,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  //     toast.success("Check your email for the login link!", {
+  //       description: "We sent a magic link to your email to log in.",
+  //     });
+  //   } catch (error: Error | unknown) {
+  //     const message = error instanceof Error ? error.message : "Authentication failed";
+  //     toast.error("Authentication failed", {
+  //       description: message,
+  //     });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
 
 
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-      },
-    });
+  // const handleGoogleSignIn = async () => {
+  //   setIsLoading(true);
+  //   const { error } = await supabase.auth.signInWithOAuth({
+  //     provider: "google",
+  //     options: {
+  //       redirectTo: `${window.location.origin}/dashboard`,
+  //     },
+  //   });
 
-    if (error) {
-      setIsLoading(false);
-      console.error(error.message);
-      toast.error(error.message);
-    }
-  };
+  //   if (error) {
+  //     setIsLoading(false);
+  //     console.error(error.message);
+  //     toast.error(error.message);
+  //   }
+  // };
 
 
 
@@ -80,7 +80,7 @@ function AuthLogin() {
           buttonText={"Sign in"}
           formData={formData}
           setFormData={setFormData}
-          onSubmit={onSubmit}
+          onSubmit={() => {}}
           forgotPassword={forgotPassword}
           loading={isLoading}
 
@@ -91,7 +91,7 @@ function AuthLogin() {
           <div className="grow h-px bg-[#EDE9FE]"></div>
         </div>
 
-        <Button onClick={handleGoogleSignIn} className="border py-6 px-3.5 text-sm md:text-md w-full gap-2 bg-transparent text-[#111827] border-[#EDE9FE] rounded-md hover:bg-[#F5F3FF] transition-colors flex items-center justify-center relative cursor-pointer">
+        <Button onClick={() => {}} className="border py-6 px-3.5 text-sm md:text-md w-full gap-2 bg-transparent text-[#111827] border-[#EDE9FE] rounded-md hover:bg-[#F5F3FF] transition-colors flex items-center justify-center relative cursor-pointer">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 16 16"

@@ -23,7 +23,7 @@ function App() {
       <Route path="/" element={
         <CheckAuth >
         <AuthLayout />
-        </CheckAuth>
+       </CheckAuth>
         }>
         <Route index element={<AuthLogin />} />
       </Route>
@@ -31,9 +31,9 @@ function App() {
       <Route
         path="/auth"
         element={
-          <CheckAuth >
+           <CheckAuth >
             <AuthLayout />
-           </CheckAuth>
+            </CheckAuth>
         }
       >
         <Route path="signin" element={<AuthLogin />} />
@@ -44,9 +44,9 @@ function App() {
       <Route
         path="/dashboard"
         element={
-          <CheckAuth >
+           <CheckAuth >
             <DashboardLayout />
-            </CheckAuth>
+             </CheckAuth>
         }
       >
         <Route index element={<HomeDashboard />} />
